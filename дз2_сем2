@@ -1,0 +1,50 @@
+dislikes = []
+print("Введите элементы списков (каждая строка — внутренний список). Для завершения ввода введите 'end'.")
+
+while True:
+    graph = input("Введите элементы строки, разделенные пробелами: ").strip()
+    if graph == "end": 
+        break
+    graph = [int(x) for x in graph.split()]
+    dislikes.append(graph)
+print("Список списков:", dislikes)
+
+gr = {}
+for i, j in dislikes:
+    if i in gr:
+        gr[i].append(j)
+    else:
+        gr[i] = [j]
+    if j in gr:
+        gr[j].append(i)
+    else:
+        gr[j] = [i]
+
+print("граф:", gr)
+
+def is_bipartite_dfs(graph, node, colors=None, color=0):
+    if colors is None:
+        colors = {}  # Словарь для хранения цветов вершин
+    
+    if node in colors:
+        return colors[node] == color  # Проверяем, что вершина уже окрашена правильно
+    
+    colors[node] = color  # Красим текущую вершину в текущий цвет
+    
+    for neighbor in graph[node]:
+        # Рекурсивно проверяем соседей, окрашивая их в противоположный цвет
+        if not is_bipartite_dfs(graph, neighbor, colors, 1 - color):
+            return False
+    
+    return True
+
+def check_bipartite(graph):
+    colors = {}  # Словарь для хранения информации о цветах вершин
+    for node in graph:
+        if node not in colors:  # Проверяем каждую компоненту связности
+            if not is_bipartite_dfs(graph, node, colors):
+                return False  # Если хоть одна компонента не двудольная, возвращаем False
+    return True
+
+
+print(check_bipartite(gr))
