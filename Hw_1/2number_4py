@@ -1,0 +1,20 @@
+import RPi.GPIO as gp
+import time
+dac = [8, 11, 7, 1, 0, 5, 12, 6]
+gp.setmode(gp.BCM)
+gp.setup(dac, gp.OUT)
+def dec2bin(x):
+    return [int(i) for i in bin(x)[2:].zfill(8)]
+try:
+    p = float(input("Введите период сигнала в секундах:"))
+    while True:
+        for i in range(256):
+            gp.output(dac, dec2bin(i))
+            time.sleep(p/512)
+
+        for i in range(254, 0, -1):
+            gp.output(dac, dec2bin(i))
+            time.sleep(p/512)
+finally:
+    gp.output(dac, 0)
+    gp.cleanup()
